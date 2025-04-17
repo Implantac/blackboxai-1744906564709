@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all components
     initSearch();
     initReportForm();
     initStatisticsCounter();
@@ -14,7 +13,6 @@ function initSearch() {
     const searchInput = searchForm.querySelector('input');
     const searchButton = searchForm.querySelector('button');
     
-    // Handle both button click and form submission
     const handleSearch = (e) => {
         e.preventDefault();
         const searchTerm = searchInput.value.trim();
@@ -24,15 +22,12 @@ function initSearch() {
             return;
         }
 
-        // Show loading state
         searchButton.disabled = true;
         const originalButtonText = searchButton.innerHTML;
         searchButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Buscando...';
         
-        // Simulate API call
         setTimeout(() => {
             try {
-                // Mock risk calculation based on search term length
                 const riskScore = Math.floor(Math.random() * 100);
                 const complaints = Math.floor(Math.random() * 1000);
                 
@@ -49,19 +44,16 @@ function initSearch() {
             } catch (error) {
                 showNotification('Erro ao realizar a busca. Tente novamente.', 'error');
             } finally {
-                // Reset button state
                 searchButton.disabled = false;
                 searchButton.innerHTML = originalButtonText;
             }
         }, 1500);
     };
 
-    // Add event listeners for both click and form submission
     searchButton.addEventListener('click', handleSearch);
     searchForm.addEventListener('submit', handleSearch);
 }
 
-// Display search results with enhanced UI
 function displaySearchResults(result) {
     const getRiskColorClass = (riskLevel) => {
         if (riskLevel > 70) return 'bg-red-50 border-red-200 text-red-700';
@@ -119,35 +111,23 @@ function initReportForm() {
     const form = document.querySelector('#report form');
     if (!form) return;
 
-    const typeSelect = form.querySelector('select');
-    const description = form.querySelector('textarea');
-    const contacts = form.querySelector('input[type="text"]');
+    const typeSelect = form.querySelector('select[name="scamType"]');
+    const description = form.querySelector('textarea[name="description"]');
+    const contacts = form.querySelector('input[name="contacts"]');
     const submitButton = form.querySelector('button[type="submit"]');
 
-    // Add options to select
-    const scamTypes = [
-        { value: '', text: 'Selecione o tipo de golpe' },
-        { value: 'pix', text: 'Golpe do PIX' },
-        { value: 'whatsapp', text: 'Clonagem de WhatsApp' },
-        { value: 'boleto', text: 'Falso Boleto' },
-        { value: 'site', text: 'Site Falso' },
-        { value: 'outros', text: 'Outros' }
-    ];
-
-    typeSelect.innerHTML = scamTypes.map(type => 
-        `<option value="${type.value}">${type.text}</option>`
-    ).join('');
-    
+    // Handle form submission
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Validate required fields
+        // Validate scam type
         if (!typeSelect.value) {
             showNotification('Por favor, selecione o tipo de golpe', 'error');
             typeSelect.focus();
             return;
         }
         
+        // Validate description
         if (!description.value.trim()) {
             showNotification('Por favor, descreva o golpe', 'error');
             description.focus();
@@ -172,6 +152,12 @@ function initReportForm() {
                 console.log('Dados da denúncia:', formData);
                 showNotification('Denúncia enviada com sucesso! Obrigado por contribuir.', 'success');
                 form.reset();
+                
+                // Scroll to top after successful submission
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             } catch (error) {
                 showNotification('Erro ao enviar denúncia. Tente novamente.', 'error');
             } finally {
@@ -181,7 +167,7 @@ function initReportForm() {
         }, 1500);
     });
 
-    // Add change event listener to select
+    // Add change event listener to select for styling
     typeSelect.addEventListener('change', function() {
         if (this.value) {
             this.classList.add('text-gray-900');
@@ -214,7 +200,6 @@ function initStatisticsCounter() {
                 current = end;
             }
             
-            // Extract the non-numeric part of the text
             const textParts = element.textContent.split(/(\d+)/);
             if (textParts.length >= 3) {
                 element.textContent = textParts[0] + Math.floor(current) + textParts[2];
@@ -263,7 +248,6 @@ function initSmoothScroll() {
 
 // Enhanced notification system
 function showNotification(message, type = 'success') {
-    // Remove existing notifications
     const existingNotifications = document.querySelectorAll('.notification');
     existingNotifications.forEach(notification => notification.remove());
     
@@ -279,7 +263,6 @@ function showNotification(message, type = 'success') {
     
     document.body.appendChild(notification);
     
-    // Add fade out animation
     setTimeout(() => {
         notification.style.transition = 'opacity 0.3s ease-in-out';
         notification.style.opacity = '0';

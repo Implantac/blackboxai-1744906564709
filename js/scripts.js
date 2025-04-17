@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
 });
 
-// Search functionality
 function initSearch() {
     const searchForm = document.querySelector('#search .flex');
     if (!searchForm) return;
@@ -106,9 +105,8 @@ function displaySearchResults(result) {
     resultsContainer.innerHTML = resultHTML;
 }
 
-// Report form handling with validation
 function initReportForm() {
-    const form = document.querySelector('#report form');
+    const form = document.querySelector('#reportForm');
     if (!form) return;
 
     const typeSelect = form.querySelector('select[name="scamType"]');
@@ -119,40 +117,41 @@ function initReportForm() {
     // Handle form submission
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         // Validate scam type
         if (!typeSelect.value) {
             showNotification('Por favor, selecione o tipo de golpe', 'error');
             typeSelect.focus();
             return;
         }
-        
+
         // Validate description
         if (!description.value.trim()) {
             showNotification('Por favor, descreva o golpe', 'error');
             description.focus();
             return;
         }
-        
+
         // Prepare form data
         const formData = {
             type: typeSelect.value,
             description: description.value.trim(),
             contacts: contacts.value.trim()
         };
-        
+
         // Show loading state
         submitButton.disabled = true;
         const originalButtonText = submitButton.innerHTML;
         submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
-        
+
         // Simulate form submission
         setTimeout(() => {
             try {
                 console.log('Dados da denúncia:', formData);
                 showNotification('Denúncia enviada com sucesso! Obrigado por contribuir.', 'success');
                 form.reset();
-                
+                typeSelect.selectedIndex = 0;
+
                 // Scroll to top after successful submission
                 window.scrollTo({
                     top: 0,
@@ -168,18 +167,19 @@ function initReportForm() {
     });
 
     // Add change event listener to select for styling
-    typeSelect.addEventListener('change', function() {
-        if (this.value) {
-            this.classList.add('text-gray-900');
-            this.classList.remove('text-gray-500');
-        } else {
-            this.classList.remove('text-gray-900');
-            this.classList.add('text-gray-500');
-        }
-    });
+    if (typeSelect) {
+        typeSelect.addEventListener('change', function() {
+            if (this.value) {
+                this.classList.add('text-gray-900');
+                this.classList.remove('text-gray-500');
+            } else {
+                this.classList.remove('text-gray-900');
+                this.classList.add('text-gray-500');
+            }
+        });
+    }
 }
 
-// Statistics counter animation
 function initStatisticsCounter() {
     const statsContainer = document.querySelector('#dashboard');
     if (!statsContainer) return;
@@ -230,7 +230,6 @@ function initStatisticsCounter() {
     stats.forEach(stat => observer.observe(stat));
 }
 
-// Smooth scroll functionality
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
@@ -246,7 +245,6 @@ function initSmoothScroll() {
     });
 }
 
-// Enhanced notification system
 function showNotification(message, type = 'success') {
     const existingNotifications = document.querySelectorAll('.notification');
     existingNotifications.forEach(notification => notification.remove());
